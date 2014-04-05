@@ -1,14 +1,19 @@
-
-# coding=UTF-8
 import os
+import json
+import sys
 from TwitterAPI import TwitterAPI
+from pymongo import Connection
+import json
 
+conn = Connection()
+db = conn.cl_database
+test = db.test
 consumer_secret = os.environ["TWITTER_CONSUMER_SECRET"]
 access_token_secret = os.environ["TWITTER_ACCESS_TOKEN_SECRET"]
 
 api = TwitterAPI("HwGr44NowJ3vR86MFlnQfpypE", consumer_secret, "114469092-6f5A0WnNkiBBKy1xdN7aN3qWSUraSyThaUDeurer", access_token_secret)
 
-#San Andrés y Providencia
+#San Andres y Providencia
 #boundingBox1 = "-81.7863984108,12.4616635796,-81.3097076416,12.4716635796,-81.3097076416,13.4192660311,-81.7863984108,13.4292660311,"
 #Partes de Colombia
 #boundingBox2 = "-77.3039765358,0.281175832,-72.9820709229,0.281175832,-72.9820709229,12.6670794767,-77.3039765358,12.6670794767,"
@@ -21,7 +26,6 @@ api = TwitterAPI("HwGr44NowJ3vR86MFlnQfpypE", consumer_secret, "114469092-6f5A0W
 
 #boundingTotal = boundingBox1 + boundingBox2 + boundingBox3 + boundingBox5 + boundingBox6 + boundingBox7 + boundingBox8
 #print boundingTotal
-
 r = api.request('statuses/filter', {'locations':'-79.62,-5.15,-66.27,13.26'})
 with open("tweets_streaming.json", "a") as streamingfile:
     for item in r.get_iterator():
