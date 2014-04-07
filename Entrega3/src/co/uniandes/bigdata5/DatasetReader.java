@@ -44,14 +44,15 @@ public class DatasetReader {
                 // Tab separated values
                 
                 String[] data = line.split("\t");
-                if(data[2].startsWith("\"") && !data[2].endsWith("\""))
+                while(data.length < 5 || (data[2].startsWith("\"") && !data[2].endsWith("\"")))
                 {
                     line = br.readLine();
                     String[] newData = line.split("\t");
                     ArrayList<String> temporaryArray = new ArrayList<>();
-                    //
+                    data[2] = data[2] + newData[0];
                     temporaryArray.addAll(Arrays.asList(data));
                     temporaryArray.addAll(Arrays.asList(newData));
+                    temporaryArray.remove(data.length);
                     data = (String[])temporaryArray.toArray(data);
                 }
                 TweetDocument tweet = null;
@@ -59,7 +60,9 @@ public class DatasetReader {
                     tweet = new TweetDocument(Integer.parseInt(data[0]), data[1], data[2], data[3], data[4]);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println(line);
+                    System.out.println(data[2]);
                     System.out.println(data.length);
+                    e.printStackTrace();
                     // TODO Auto-generated catch block
                     //e.printStackTrace();
                     return;
