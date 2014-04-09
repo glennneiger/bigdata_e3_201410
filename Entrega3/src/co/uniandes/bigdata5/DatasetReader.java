@@ -12,9 +12,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.JFileChooser;
-
-import co.uniandes.bigdata5.mongo.Mongo;
+import co.uniandes.bigdata5.mongo.MongoAccess;
 import co.uniandes.bigdata5.mongo.TweetDocument;
 
 /**
@@ -23,16 +21,17 @@ import co.uniandes.bigdata5.mongo.TweetDocument;
  */
 public class DatasetReader {
 
-    private Mongo mongo = Mongo.getInstance();
+    private MongoAccess mongoAccess = MongoAccess.getInstance();
     
     public DatasetReader(File file) {
         try {
             FileInputStream fis = new FileInputStream(file);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
-
+            
             String line;
 
+            long initialTweetCount = mongoAccess.getTweetCount();
             
             // Skip the headers
             while ((line = br.readLine()).startsWith("#")) {
@@ -56,47 +55,46 @@ public class DatasetReader {
                     data = (String[])temporaryArray.toArray(data);
                 }
                 TweetDocument tweet = null;
-                try {
-                    tweet = new TweetDocument(Integer.parseInt(data[0]), data[1], data[2], data[3], data[4]);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println(line);
-                    System.out.println(data[2]);
-                    System.out.println(data.length);
-                    e.printStackTrace();
-                    // TODO Auto-generated catch block
-                    //e.printStackTrace();
-                    return;
-                }
+                tweet = new TweetDocument(Integer.parseInt(data[0]), data[1], data[2], data[3], data[4]);
+                
+                //Rating processing
+                double ratingCount = 0.0;
+                double[] ratings = {0.0,0.0,0.0,0.0};
+                int ratingSummary = -1;
                 for (int i = 5; i < data.length; i++) {
                     if (!data[i].isEmpty())
+                    {
+                        ratings[Integer.parseInt(data[i])-1]++;
                         tweet.addRating(i, Integer.parseInt(data[i]));
+                        ratingCount++;
+                    }                   
                 }
-                //mongo.addTweet(tweet);
+                
+                for (int i = 0; i < ratings.length; i++) {
+                    ratings[i] /= ratingCount;
+                    if(ratings[i] > 0.5)
+                    {
+                        ratingSummary = i+1;
+                        break;
+                    }
+                }
+                
+                if(ratingSummary==-1)
+                {
+                    
+                }
+                
+                mongoAccess.addTweet(tweet);
                 tweetCount++;
             }
             
-            System.out.println("Added "+tweetCount+" tweets");
+            System.out.println("Read "+tweetCount+" tweets");
+            System.out.println("Added "+(mongoAccess.getTweetCount()- initialTweetCount)+" tweets");
 
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-
-        JFileChooser jfc = new JFileChooser(new File("/home/sebastian/Documents/201410/Big Data/Entregables"));
-        if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
-            new DatasetReader(jfc.getSelectedFile());
-        // TODO Auto-generated method stub
-
-    }
-
 }
