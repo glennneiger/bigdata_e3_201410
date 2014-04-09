@@ -81,9 +81,12 @@ public class DatasetReader {
                 
                 if(ratingSummary==-1)
                 {
-                    
+                    if(ratings[0]+ratings[1] > 0.5)
+                        ratingSummary = 2;
+                    else
+                        ratingSummary = 4;
                 }
-                
+                tweet.append("ratingSummary", ratingSummary);
                 mongoAccess.addTweet(tweet);
                 tweetCount++;
             }
