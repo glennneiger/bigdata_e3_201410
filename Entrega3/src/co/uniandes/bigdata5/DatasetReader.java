@@ -14,6 +14,7 @@ import java.util.Arrays;
 
 import co.uniandes.bigdata5.mongo.MongoAccess;
 import co.uniandes.bigdata5.mongo.TweetDocument;
+import co.uniandes.bigdata5.sentimentAnalysis.SentimentAnalyzer;
 
 /**
  * @author sebastian
@@ -28,6 +29,7 @@ public class DatasetReader {
             FileInputStream fis = new FileInputStream(file);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
+            SentimentAnalyzer sa = new SentimentAnalyzer();
             
             String line;
 
@@ -37,8 +39,13 @@ public class DatasetReader {
             while ((line = br.readLine()).startsWith("#")) {
             }
             line = br.readLine();
-
-            int tweetCount = 0;
+            ArrayList<Integer> valueSet = new ArrayList<Integer>();
+            for (int i =0;i<10;i++)
+            {
+                valueSet.add(0);
+            }
+            double tweetCount = 0.0;
+            double hitCount = 0.0;
             while ((line = br.readLine()) != null) {
                 // Tab separated values
                 
@@ -87,13 +94,27 @@ public class DatasetReader {
                         ratingSummary = 4;
                 }
                 tweet.append("ratingSummary", ratingSummary);
-                mongoAccess.addTweet(tweet);
+                int sentiment = sa.findSentiment(data[2]);
+                
+                valueSet.ensureCapacity(sentiment+2);
+                Integer stored = valueSet.get(sentiment);
+                if(stored == null)
+                    stored = new Integer(0);
+                stored++;
+                valueSet.set(sentiment, stored);
+                
+                if((sentiment <=2 && ratingSummary == 1) || (sentiment >=4 && ratingSummary == 2) || (sentiment == 3 && ratingSummary == 3) || ratingSummary == 4)
+                {
+                    hitCount++;
+                }
+                //mongoAccess.addTweet(tweet);
                 tweetCount++;
             }
             
             System.out.println("Read "+tweetCount+" tweets");
             System.out.println("Added "+(mongoAccess.getTweetCount()- initialTweetCount)+" tweets");
-
+            System.out.println("Hit count "+(hitCount/tweetCount)+"%");
+            Arrays.toString(valueSet.toArray());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
