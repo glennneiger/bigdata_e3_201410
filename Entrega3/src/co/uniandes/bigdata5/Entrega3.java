@@ -16,9 +16,7 @@ public class Entrega3 {
      */
     public static void main(String[] args) {
         
-        String help = "Usage:\njava -jar entrega3 COMMAND options\nPossible commands:\n\tload_mongo\tLoad mongo " +
-        		"with main tweetset (requires file parameter)\n\tsentiment_analysis\tPerform sentiment analysis over the " +
-        		"tweetset\n\tgeolocation\tAttempt to guess geographic location based on possible mention of cities";
+        String help = "Usage:\njava -jar entrega3 load_mongo tweetfile";
         
         if(args.length < 1)
         {

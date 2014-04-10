@@ -14,5 +14,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/stanford-corenlp-3.3.1-models.jar"/>
 	<classpathentry kind="lib" path="lib/ejml-0.23.jar"/>
+	<classpathentry kind="lib" path="lib/patricia-trie-0.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

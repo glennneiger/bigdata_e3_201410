@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 import co.uniandes.bigdata5.mongo.MongoAccess;
 import co.uniandes.bigdata5.mongo.TweetDocument;
 import co.uniandes.bigdata5.sentimentAnalysis.SentimentAnalyzer;
+
+import com.mongodb.BasicDBObject;
 /**
  * @author sebastian
  * 
@@ -34,7 +36,7 @@ public class DatasetReader {
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
             SentimentAnalyzer sa = new SentimentAnalyzer();
-            
+            GeoData geoData = new GeoData();
             String line;
 
             long initialTweetCount = mongoAccess.getTweetCount();
@@ -50,6 +52,7 @@ public class DatasetReader {
             }
             double tweetCount = 0.0;
             double hitCount = 0.0;
+            int geocount = 0;
             while ((line = br.readLine()) != null) {
                 // Tab separated values
                 
@@ -67,6 +70,17 @@ public class DatasetReader {
                 }
                 TweetDocument tweet = null;
                 tweet = new TweetDocument(Integer.parseInt(data[0]), data[1], data[2], data[3], data[4]);
+                
+                //Geolocation
+                float[] latlon = geoData.getLocation(data[2].toLowerCase());
+                if(latlon != null)
+                {
+                	BasicDBObject geoGjon = new BasicDBObject();
+                	geoGjon.append("type", "Point");
+                	geoGjon.append("coordinates", latlon);
+                	tweet.append("loc", geoGjon);
+                	geocount++;
+                }
                 
                 //Hashtags
                 Matcher matcher = hashtagPattern.matcher(data[2]);
@@ -109,6 +123,7 @@ public class DatasetReader {
                 }
                 tweet.append("ratingSummary", ratingSummary);
                 int sentiment = sa.findSentiment(data[2]);
+                tweet.append("ourFoundSentiment", sentiment);
                 
                 valueSet.ensureCapacity(sentiment+2);
                 Integer stored = valueSet.get(sentiment);
@@ -121,14 +136,13 @@ public class DatasetReader {
                 {
                     hitCount++;
                 }
-                //mongoAccess.addTweet(tweet);
+                mongoAccess.addTweet(tweet);
                 tweetCount++;
             }
-            
             System.out.println("Read "+tweetCount+" tweets");
             System.out.println("Added "+(mongoAccess.getTweetCount()- initialTweetCount)+" tweets");
             System.out.println("Hit count "+(hitCount/tweetCount)+"%");
-            Arrays.toString(valueSet.toArray());
+            System.out.println(Arrays.toString(valueSet.toArray()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

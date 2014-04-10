@@ -27,7 +27,7 @@ public class MongoAccess {
         try {
             //Connection setup
             mongo = new Mongo();
-            db =  mongo.getDB("tweets_main");
+            db =  mongo.getDB("Grupo05_tweetsmain");
             col = db.getCollection("tweets");
             mongo.setWriteConcern(WriteConcern.SAFE); //Exception thrown in any error
             
