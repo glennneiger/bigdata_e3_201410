@@ -14,7 +14,7 @@ import org.ardverk.collection.Trie;
 
 public class GeoData {
 	
-	private final static String GEODATA_LOCATION = "."+File.separator+"data"+File.separator+"geodata.csv";
+	private final static String GEODATA_LOCATION = "."+File.separator+"geodata.csv";
 	private Trie<String, float[]> locations;
 	public GeoData(){
 		try {

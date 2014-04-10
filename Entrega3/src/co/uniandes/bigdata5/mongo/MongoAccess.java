@@ -32,10 +32,10 @@ public class MongoAccess {
             mongo.setWriteConcern(WriteConcern.SAFE); //Exception thrown in any error
             
             //Index creation
-            BasicDBObject uniqueIndex = new BasicDBObject("id", 1 ); 
-            uniqueIndex.append("unique", "true");
-            uniqueIndex.append("dropDups","true");
-            col.createIndex(uniqueIndex);
+//            BasicDBObject uniqueIndex = new BasicDBObject("id", 1 ); 
+//            uniqueIndex.append("unique", "true");
+//            uniqueIndex.append("dropDups","true");
+//            col.createIndex(uniqueIndex);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
