@@ -11,11 +11,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import co.uniandes.bigdata5.mongo.MongoAccess;
 import co.uniandes.bigdata5.mongo.TweetDocument;
 import co.uniandes.bigdata5.sentimentAnalysis.SentimentAnalyzer;
-
 /**
  * @author sebastian
  * 
@@ -23,6 +24,9 @@ import co.uniandes.bigdata5.sentimentAnalysis.SentimentAnalyzer;
 public class DatasetReader {
 
     private MongoAccess mongoAccess = MongoAccess.getInstance();
+    
+    private static final String REGEX = "#(\\w*)";
+    private Pattern hashtagPattern = Pattern.compile(REGEX);
     
     public DatasetReader(File file) {
         try {
@@ -63,6 +67,16 @@ public class DatasetReader {
                 }
                 TweetDocument tweet = null;
                 tweet = new TweetDocument(Integer.parseInt(data[0]), data[1], data[2], data[3], data[4]);
+                
+                //Hashtags
+                Matcher matcher = hashtagPattern.matcher(data[2]);
+                ArrayList<String> hashtags = new ArrayList<String>();
+                while(matcher.find())
+                {
+                	hashtags.add(matcher.group());
+                }
+                if(hashtags.size()>0)
+                	tweet.append("hashtags", hashtags.toArray());
                 
                 //Rating processing
                 double ratingCount = 0.0;
