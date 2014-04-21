@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/mongo-java-driver-2.9.3.jar" sourcepath="lib/mongo-java-driver-2.9.3-sources.jar">
+	<classpathentry kind="lib" path="lib/mongo-java-driver-2.11.4.jar" sourcepath="lib/mongo-java-driver-2.11.4-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/Entrega3/lib/mongo-java-driver-2.9.3-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Entrega3/lib/mongo-java-driver-2.11.4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/stanford-corenlp-3.3.1.jar">

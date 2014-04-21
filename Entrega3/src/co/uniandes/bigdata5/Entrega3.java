@@ -25,6 +25,7 @@ public class Entrega3 {
         }
         
         String command = args[0];
+        boolean bonus;
         switch (command){
             case "load_mongo":
                 if(args.length < 2 || !(new File(args[1])).exists() || (new File(args[1])).isDirectory()){
@@ -32,8 +33,19 @@ public class Entrega3 {
                     System.exit(-1);
                 }
                 
+                bonus = false;
                 File tweetFile = new File(args[1]);
-                new DatasetReader(tweetFile);
+                new DatasetReader(tweetFile, bonus);
+                break;
+            case "load_mongo_bonus":
+                if(args.length < 2 || !(new File(args[1])).exists() || (new File(args[1])).isDirectory()){
+                    System.out.println("Tweet file required");
+                    System.exit(-1);
+                }
+                
+                bonus = true;
+                tweetFile = new File(args[1]);
+                new DatasetReader(tweetFile, bonus);
                 break;
             case "sentiment_analysis":
                 //new SentimentAnalyzer();

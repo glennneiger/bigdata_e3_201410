@@ -5,10 +5,9 @@ package co.uniandes.bigdata5.mongo;
 
 import java.net.UnknownHostException;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import com.mongodb.WriteConcern;
 
 /**
@@ -22,12 +21,15 @@ public class MongoAccess {
     private DB db;
     private DBCollection col;
     
-    private MongoAccess()
+    private MongoAccess(boolean bonus)
     {
         try {
             //Connection setup
-            mongo = new Mongo();
-            db =  mongo.getDB("Grupo05_tweetsmain");
+        	mongo = new MongoClient();
+            if (bonus)
+            	db =  mongo.getDB("Grupo05_tweetsmain");
+            else
+            	db =  mongo.getDB("Grupo05_tweetsbonus");
             col = db.getCollection("tweets");
             mongo.setWriteConcern(WriteConcern.SAFE); //Exception thrown in any error
             
@@ -53,10 +55,10 @@ public class MongoAccess {
         return col.count();
     }
     
-    public final static MongoAccess getInstance()
+    public final static MongoAccess getInstance(boolean bonus)
     {
         if(instance==null)
-            instance = new MongoAccess();
+            instance = new MongoAccess(bonus);
         
         return instance;
     }

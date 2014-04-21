@@ -25,13 +25,13 @@ import com.mongodb.BasicDBObject;
  */
 public class DatasetReader {
 
-    private MongoAccess mongoAccess = MongoAccess.getInstance();
-    
     private static final String REGEX = "#(\\w*)";
     private Pattern hashtagPattern = Pattern.compile(REGEX);
     
-    public DatasetReader(File file) {
+    public DatasetReader(File file, boolean bonus) {
         try {
+            MongoAccess mongoAccess = MongoAccess.getInstance(bonus);
+            
             FileInputStream fis = new FileInputStream(file);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
@@ -139,6 +139,7 @@ public class DatasetReader {
                 mongoAccess.addTweet(tweet);
                 tweetCount++;
             }
+            br.close();
             System.out.println("Read "+tweetCount+" tweets");
             System.out.println("Added "+(mongoAccess.getTweetCount()- initialTweetCount)+" tweets");
             System.out.println("Hit count "+(hitCount/tweetCount)+"%");
